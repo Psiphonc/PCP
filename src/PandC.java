@@ -1,19 +1,18 @@
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class PandC {
     CircularQueue buffer = new CircularQueue<Integer>(20);
-    Producer P=new Producer();
-    Consumer C=new Consumer();
+    Producer P = new Producer();
+    Consumer C = new Consumer();
+
     class Producer implements Runnable {
         void produce() {
             int randomNum;
             while (true) {
-                randomNum = new Random().nextInt(100) +1;
+                randomNum = new Random().nextInt(100) + 1;
                 buffer.offer(randomNum);
-                System.out.println("Producer:"+randomNum);
-                if (randomNum==100) break;
+                System.out.println("Producer:" + randomNum);
+                if (randomNum == 100) break;
             }
         }
 
@@ -27,18 +26,20 @@ public class PandC {
             }
         }
     }
-    class Consumer implements Runnable{
+
+    class Consumer implements Runnable {
         void consume() {
             while (true) {
                 try {
                     int num = (int) buffer.poll();
                     System.out.println("cunsumer:" + num);
-                    if(num==100) break;
+                    if (num == 100) break;
                 } catch (QueueEmptyException e) {
                     e.printStackTrace();
                 }
             }
         }
+
         @Override
         public void run() {
             consume();
@@ -49,10 +50,11 @@ public class PandC {
             }
         }
     }
+
     public static void main(String[] args) {
-        PandC pc=new PandC();
-        Thread P= new Thread(pc.P);
-        Thread C= new Thread(pc.C);
+        PandC pc = new PandC();
+        Thread P = new Thread(pc.P);
+        Thread C = new Thread(pc.C);
         P.start();
         C.start();
     }
