@@ -5,7 +5,7 @@ public class PandC {
     CircularQueue buffer = new CircularQueue<Integer>(20);
     Producer P = new Producer();
     Consumer C = new Consumer();
-    Semaphore semaphore=new Semaphore(1);
+    Semaphore semaphore = new Semaphore(1);
 
     class Producer implements Runnable {
         void produce() throws InterruptedException {
@@ -19,8 +19,7 @@ public class PandC {
                 } catch (QueueFullException e) {
                     e.printStackTrace();
                     continue;
-                }
-                finally {
+                } finally {
                     semaphore.release();
                 }
                 if (randomNum == 100) break;
@@ -52,8 +51,7 @@ public class PandC {
                     if (num == 100) break;
                 } catch (QueueEmptyException e) {
                     e.printStackTrace();
-                }
-                finally {
+                } finally {
                     semaphore.release();
                 }
             }
