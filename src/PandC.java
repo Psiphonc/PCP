@@ -10,7 +10,12 @@ public class PandC {
             int randomNum;
             while (true) {
                 randomNum = new Random().nextInt(100) + 1;
-                buffer.offer(randomNum);
+                try {
+                    buffer.offer(randomNum);
+                } catch (QueueFullException e) {
+                    e.printStackTrace();
+                    continue;
+                }
                 System.out.println("Producer:" + randomNum);
                 if (randomNum == 100) break;
             }
