@@ -1,7 +1,7 @@
 public class QueueEmptyException extends Exception {
     @Override
     public void printStackTrace() {
-        System.out.println("consume faild");
+        System.out.println("consume failed");
 
     }
 }
