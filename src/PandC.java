@@ -1,26 +1,41 @@
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 public class PandC {
     CircularQueue buffer = new CircularQueue<Integer>(20);
     Producer P = new Producer();
     Consumer C = new Consumer();
+    Semaphore semaphore=new Semaphore(1);
 
     class Producer implements Runnable {
-        void produce() {
+        void produce() throws InterruptedException {
             int randomNum;
             while (true) {
                 randomNum = new Random().nextInt(100) + 1;
-                buffer.offer(randomNum);
-                System.out.println("Producer:" + randomNum);
+                semaphore.acquire();
+                try {
+                    buffer.offer(randomNum);
+                    System.out.println("Producer:" + randomNum);
+                } catch (QueueFullException e) {
+                    e.printStackTrace();
+                    continue;
+                }
+                finally {
+                    semaphore.release();
+                }
                 if (randomNum == 100) break;
             }
         }
 
         @Override
         public void run() {
-            produce();
             try {
-                Thread.sleep(1000);
+                produce();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            try {
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -28,8 +43,9 @@ public class PandC {
     }
 
     class Consumer implements Runnable {
-        void consume() {
+        void consume() throws InterruptedException {
             while (true) {
+                semaphore.acquire();
                 try {
                     int num = (int) buffer.poll();
                     System.out.println("cunsumer:" + num);
@@ -37,21 +53,28 @@ public class PandC {
                 } catch (QueueEmptyException e) {
                     e.printStackTrace();
                 }
+                finally {
+                    semaphore.release();
+                }
             }
         }
 
         @Override
         public void run() {
-            consume();
             try {
-                Thread.sleep(1000);
+                consume();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            try {
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         PandC pc = new PandC();
         Thread P = new Thread(pc.P);
         Thread C = new Thread(pc.C);

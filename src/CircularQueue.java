@@ -9,12 +9,11 @@ public class CircularQueue<T> {
     private int in = 0;
     private int out = 0;
 
-    boolean offer(T e) {
-        if (cnt > capacity) return false;
+    void offer(T e) throws QueueFullException {
+        if (cnt > capacity) throw new QueueFullException();
         arr[in] = e;
         cnt++;
         in = (in + 1) % capacity;
-        return true;
     }
 
     T poll() throws QueueEmptyException{
